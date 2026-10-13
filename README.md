@@ -113,7 +113,7 @@ Give students the public service URL for registration. Give Madam the same site'
 - Roll numbers are trimmed, saved uppercase, and unique; duplicate submissions are handled safely.
 - Only the logged-in admin can view student records and export CSV.
 - A student's success page shows only that student's own confirmation.
-- Admin forms use CSRF tokens; response headers reduce common browser risks.
+- Admin forms use CSRF tokens; same-origin referrers support secure form checks while preventing referrer details from being sent to other sites.
 - The CSV export includes a UTF-8 BOM and neutralizes spreadsheet formula prefixes.
 - Never put real secrets in source code or commit `.env` or a database containing student details.
 
