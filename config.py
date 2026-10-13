@@ -54,6 +54,8 @@ if not ADMIN_USERNAME:
 database_url = os.getenv("DATABASE_URL", "").strip()
 if database_url.startswith("postgres://"):
     database_url = "postgresql://" + database_url[len("postgres://") :]
+if database_url.startswith("postgresql://"):
+    database_url = "postgresql+psycopg2://" + database_url[len("postgresql://") :]
 DATABASE_URL = database_url or (
     "sqlite:///" + str(Path(__file__).resolve().parent / "students.db")
 )

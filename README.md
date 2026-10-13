@@ -88,7 +88,7 @@ git push -u origin main
 1. Create a PostgreSQL database in Render, or use the database described in `render.yaml` when creating the Blueprint.
 2. Create a Render Web Service from your GitHub repository. Use Python as the runtime, `pip install -r requirements.txt` as the build command, and `gunicorn app:app` as the start command. The supplied `render.yaml` already describes these settings and connects the database.
 3. In the Render service environment settings, set `SECRET_KEY` to a long unique random value, `ADMIN_USERNAME` to the teacher's chosen username, and `ADMIN_PASSWORD` to a strong unique password. The Blueprint marks the admin values as private inputs and generates a secret key.
-4. Ensure `DATABASE_URL` is connected to the Render PostgreSQL database and `FLASK_DEBUG` is `false`. The app automatically changes Render's older `postgres://` URL prefix to `postgresql://` if needed.
+4. Ensure `DATABASE_URL` is connected to the Render PostgreSQL database and `FLASK_DEBUG` is `false`. The app automatically changes Render's older `postgres://` URL prefix and explicitly uses the installed `psycopg2` driver.
 5. Deploy, then open the service's public URL to reach the registration form. Add any initial sample data only in a suitable local/test environment; `seed_data.py` connects to whichever database `DATABASE_URL` selects.
 
 Render free-tier availability, pricing, sleep behavior, and database expiry rules can change. Check Render's current pricing and PostgreSQL documentation before relying on a free service or storing important data.
