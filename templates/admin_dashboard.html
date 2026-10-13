@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard | Student Registration{% endblock %}
+{% block header_extra %}<a class="header-link" href="{{ url_for('admin_logout') }}">Log out</a>{% endblock %}
+{% block content %}
+<div class="dashboard-heading">
+  <div>
+    <p class="eyebrow">ADMINISTRATION</p>
+    <h1>Student dashboard</h1>
+    <p>Registration records update automatically as students submit the form.</p>
+  </div>
+  <a class="button secondary" href="{{ export_url }}">Export CSV</a>
+</div>
+<section class="stats-grid" aria-label="Department student counts">
+  <a class="stat-card total-card" href="{{ url_for('admin_dashboard') }}">
+    <span>Total registered</span><strong>{{ total }}</strong>
+  </a>
+  {% for department in departments %}
+  <a class="stat-card {% if filters.get('department') == department %}selected{% endif %}" href="{{ url_for('admin_dashboard', department=department, sort=filters.get('sort', 'newest'), _anchor='student-list') }}">
+    <span>{{ department }}</span><strong>{{ counts.get(department, 0) }}</strong><span class="card-action">View students &darr;</span>
+  </a>
+  {% endfor %}
+</section>
+<section class="panel dashboard-panel">
+  <form class="filter-form" method="get" action="{{ url_for('admin_dashboard') }}">
+    <div class="field search-field">
+      <label for="search">Search name or roll number</label>
+      <input id="search" name="search" value="{{ filters.get('search', '') }}" placeholder="Type a name or roll number">
+    </div>
+    <div class="field">
+      <label for="department-filter">Department</label>
+      <select id="department-filter" name="department">
+        <option value="">All departments</option>
+        {% for department in departments %}
+        <option value="{{ department }}" {% if filters.get('department') == department %}selected{% endif %}>{{ department }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="year-filter">Year</label>
+      <select id="year-filter" name="year">
+        <option value="">All years</option>
+        {% for value in range(1, 5) %}
+        <option value="{{ value }}" {% if filters.get('year') == value|string %}selected{% endif %}>Year {{ value }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="semester-filter">Semester</label>
+      <select id="semester-filter" name="semester">
+        <option value="">All semesters</option>
+        {% for value in range(1, 9) %}
+        <option value="{{ value }}" {% if filters.get('semester') == value|string %}selected{% endif %}>Semester {{ value }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="sort">Sort by</label>
+      <select id="sort" name="sort">
+        <option value="name_asc" {% if filters.get('sort') == 'name_asc' %}selected{% endif %}>Name A-Z</option>
+        <option value="name_desc" {% if filters.get('sort') == 'name_desc' %}selected{% endif %}>Name Z-A</option>
+        <option value="roll_number" {% if filters.get('sort') == 'roll_number' %}selected{% endif %}>Roll number</option>
+        <option value="newest" {% if filters.get('sort') == 'newest' %}selected{% endif %}>Newest first</option>
+      </select>
+    </div>
+    <div class="filter-actions">
+      <button class="button primary" type="submit">Apply filters</button>
+      <a class="button text-button" href="{{ url_for('admin_dashboard') }}">Clear</a>
+    </div>
+  </form>
+  <div class="results-heading" id="student-list">
+    <h2>{% if selected_department %}{{ selected_department }} students{% else %}All students{% endif %}</h2>
+    <p>Showing {{ filtered_total }} student{% if filtered_total != 1 %}s{% endif %}</p>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Roll No</th><th>Department</th><th>Specialization</th><th>Year</th><th>Semester</th><th>Email</th><th>Record</th></tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+        <tr>
+          <td>{{ student.full_name }}</td>
+          <td>{{ student.roll_number }}</td>
+          <td>{{ student.department }}</td>
+          <td>{{ student.specialization or "—" }}</td>
+          <td>{{ student.year }}</td>
+          <td>{{ student.semester }}</td>
+          <td>{{ student.email }}</td>
+          <td><a class="button small-button" href="{{ url_for('admin_student', student_id=student.id) }}">View</a></td>
+        </tr>
+        {% else %}
+        <tr><td class="empty-state" colspan="8">No students match these filters.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if page_count > 1 %}
+  <nav class="pagination" aria-label="Student result pages">
+    {% if page > 1 %}
+    <a class="button secondary" href="{{ previous_url }}">Previous</a>
+    {% endif %}
+    <span>Page {{ page }} of {{ page_count }}</span>
+    {% if page < page_count %}
+    <a class="button secondary" href="{{ next_url }}">Next</a>
+    {% endif %}
+  </nav>
+  {% endif %}
+</section>
+{% endblock %}

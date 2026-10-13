@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Student Registration{% endblock %}
+{% block content %}
+<section class="panel form-panel">
+  <div class="intro">
+    <p class="eyebrow">STUDENT DETAILS</p>
+    <h1>Register for your department</h1>
+    <p>Enter your details carefully. Fields marked with <span aria-hidden="true">*</span> are required.</p>
+  </div>
+  <form method="post" action="{{ url_for('register') }}" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-grid">
+      <div class="field">
+        <label for="full_name">Full Name <span>*</span></label>
+        <input id="full_name" name="full_name" value="{{ request.form.get('full_name', '') }}" maxlength="100" autocomplete="name" required>
+        {% if errors.get('full_name') %}<p class="field-error">{{ errors.full_name }}</p>{% endif %}
+      </div>
+      <div class="field">
+        <label for="roll_number">University Roll Number <span>*</span></label>
+        <input id="roll_number" name="roll_number" value="{{ request.form.get('roll_number', '') }}" maxlength="30" autocomplete="off" required>
+        {% if errors.get('roll_number') %}<p class="field-error">{{ errors.roll_number }}</p>{% endif %}
+      </div>
+      {% if collect_college_reg %}
+      <div class="field">
+        <label for="college_reg_no">College Registration Number <span class="optional">(optional)</span></label>
+        <input id="college_reg_no" name="college_reg_no" value="{{ request.form.get('college_reg_no', '') }}" maxlength="50">
+        {% if errors.get('college_reg_no') %}<p class="field-error">{{ errors.college_reg_no }}</p>{% endif %}
+      </div>
+      {% endif %}
+      <div class="field">
+        <label for="department">Department <span>*</span></label>
+        <select id="department" name="department" required>
+          <option value="">Choose a department</option>
+          {% for department in departments %}
+          <option value="{{ department }}" {% if request.form.get('department') == department %}selected{% endif %}>{{ department }}</option>
+          {% endfor %}
+        </select>
+        {% if errors.get('department') %}<p class="field-error">{{ errors.department }}</p>{% endif %}
+      </div>
+      <div class="field" id="specialization-field" {% if request.form.get('department') != cse_department %}hidden{% endif %}>
+        <label for="specialization">CSE Specialization <span>*</span></label>
+        <select id="specialization" name="specialization" {% if request.form.get('department') == cse_department %}required{% endif %}>
+          <option value="">Choose your specialization</option>
+          {% for item in cse_specializations %}
+          <option value="{{ item }}" {% if request.form.get('specialization') == item %}selected{% endif %}>{{ item }}</option>
+          {% endfor %}
+        </select>
+        {% if errors.get('specialization') %}<p class="field-error">{{ errors.specialization }}</p>{% endif %}
+      </div>
+      <div class="field">
+        <label for="year">Current Year <span>*</span></label>
+        <select id="year" name="year" required>
+          <option value="">Choose your year</option>
+          {% for value in range(1, 5) %}
+          <option value="{{ value }}" {% if request.form.get('year') == value|string %}selected{% endif %}>Year {{ value }}</option>
+          {% endfor %}
+        </select>
+        {% if errors.get('year') %}<p class="field-error">{{ errors.year }}</p>{% endif %}
+      </div>
+      <div class="field">
+        <label for="semester">Current Semester <span>*</span></label>
+        <select id="semester" name="semester" required>
+          <option value="">Choose your semester</option>
+          {% for value in range(1, 9) %}
+          <option value="{{ value }}" {% if request.form.get('semester') == value|string %}selected{% endif %}>Semester {{ value }}</option>
+          {% endfor %}
+        </select>
+        {% if errors.get('semester') %}<p class="field-error">{{ errors.semester }}</p>{% endif %}
+      </div>
+      <div class="field">
+        <label for="email">Email Address <span>*</span></label>
+        <input id="email" type="email" name="email" value="{{ request.form.get('email', '') }}" maxlength="254" autocomplete="email" required>
+        {% if errors.get('email') %}<p class="field-error">{{ errors.email }}</p>{% endif %}
+      </div>
+      {% if collect_mobile %}
+      <div class="field">
+        <label for="mobile">Mobile Number <span class="optional">(optional)</span></label>
+        <input id="mobile" type="tel" name="mobile" value="{{ request.form.get('mobile', '') }}" maxlength="10" inputmode="numeric" autocomplete="tel">
+        {% if errors.get('mobile') %}<p class="field-error">{{ errors.mobile }}</p>{% endif %}
+      </div>
+      {% endif %}
+      {% if collect_gender %}
+      <div class="field">
+        <label for="gender">Gender <span class="optional">(optional)</span></label>
+        <select id="gender" name="gender">
+          <option value="">Select an option (optional)</option>
+          {% for item in genders %}
+          <option value="{{ item }}" {% if request.form.get('gender') == item %}selected{% endif %}>{{ item }}</option>
+          {% endfor %}
+        </select>
+        {% if errors.get('gender') %}<p class="field-error">{{ errors.gender }}</p>{% endif %}
+      </div>
+      {% endif %}
+    </div>
+    <button class="button primary submit-button" type="submit">Submit Registration</button>
+    <p class="privacy-note">Your registration is private. Other students cannot view your information.</p>
+  </form>
+</section>
+<script>
+  const departmentSelect = document.getElementById("department");
+  const specializationField = document.getElementById("specialization-field");
+  const specializationSelect = document.getElementById("specialization");
+  const cseDepartment = {{ cse_department|tojson }};
+  function updateSpecializationField() {
+    const isCse = departmentSelect.value === cseDepartment;
+    specializationField.hidden = !isCse;
+    specializationSelect.required = isCse;
+    if (!isCse) specializationSelect.value = "";
+  }
+  departmentSelect.addEventListener("change", updateSpecializationField);
+  updateSpecializationField();
+</script>
+{% endblock %}

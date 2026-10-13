@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Student Registration{% endblock %}</title>
+  <script>
+    try {
+      if (localStorage.getItem("student-registration-theme") === "dark") {
+        document.documentElement.dataset.theme = "dark";
+      }
+    } catch (error) {
+      // The page stays usable with the default light theme if storage is unavailable.
+    }
+  </script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="{{ url_for('register') }}">Student Registration</a>
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Use dark theme" aria-pressed="false" title="Use dark theme">
+        <span class="theme-icon" aria-hidden="true"></span>
+        <span class="theme-label">Dark</span>
+      </button>
+      {% block header_extra %}{% endblock %}
+    </div>
+  </header>
+  <main class="page">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="notice" role="status">
+          {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="site-footer">
+    <a href="{{ url_for('admin_login') }}">Admin Login</a>
+  </footer>
+  <script>
+    const themeToggle = document.getElementById("theme-toggle");
+    function updateThemeToggle() {
+      const isDark = document.documentElement.dataset.theme === "dark";
+      const label = isDark ? "Light" : "Dark";
+      const action = isDark ? "Use light theme" : "Use dark theme";
+      themeToggle.querySelector(".theme-label").textContent = label;
+      themeToggle.setAttribute("aria-label", action);
+      themeToggle.setAttribute("aria-pressed", String(isDark));
+      themeToggle.title = action;
+    }
+    themeToggle.addEventListener("click", () => {
+      const nextTheme =
+        document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = nextTheme;
+      try {
+        localStorage.setItem("student-registration-theme", nextTheme);
+      } catch (error) {
+        // The selected theme still applies for this page if storage is unavailable.
+      }
+      updateThemeToggle();
+    });
+    updateThemeToggle();
+  </script>
+</body>
+</html>

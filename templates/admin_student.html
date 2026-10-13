@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{{ student.full_name }} | Student Record{% endblock %}
+{% block header_extra %}<a class="header-link" href="{{ url_for('admin_logout') }}">Log out</a>{% endblock %}
+{% block content %}
+<section class="panel record-panel">
+  <a class="back-link" href="{{ url_for('admin_dashboard') }}">← Back to dashboard</a>
+  <p class="eyebrow">STUDENT RECORD</p>
+  <h1>{{ student.full_name }}</h1>
+  <dl class="detail-list">
+    <div><dt>University Roll Number</dt><dd>{{ student.roll_number }}</dd></div>
+    <div><dt>College Registration Number</dt><dd>{{ student.college_reg_no or "Not provided" }}</dd></div>
+    <div><dt>Department</dt><dd>{{ student.department }}</dd></div>
+    <div><dt>Specialization</dt><dd>{{ student.specialization or "Not applicable" }}</dd></div>
+    <div><dt>Current Year</dt><dd>{{ student.year }}</dd></div>
+    <div><dt>Current Semester</dt><dd>{{ student.semester }}</dd></div>
+    <div><dt>Email</dt><dd>{{ student.email }}</dd></div>
+    <div><dt>Mobile</dt><dd>{{ student.mobile or "Not provided" }}</dd></div>
+    <div><dt>Gender</dt><dd>{{ student.gender or "Not provided" }}</dd></div>
+    <div><dt>Registered On</dt><dd>{{ student.created_at.strftime("%Y-%m-%d %H:%M") }} UTC</dd></div>
+  </dl>
+  <a class="button secondary" href="{{ url_for('admin_dashboard') }}">Back to dashboard</a>
+</section>
+{% endblock %}
