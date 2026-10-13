@@ -15,6 +15,7 @@ DEPARTMENTS = [
     "Other",
 ]
 CSE_SPECIALIZATIONS = [
+    "None (Core branch)",
     "Cyber Security",
     "Artificial Intelligence (AI)",
     "Machine Learning (ML)",

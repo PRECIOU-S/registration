@@ -58,7 +58,7 @@ To start clean for real registrations, stop the app with `Ctrl+C`, remove the lo
 
 ## Test the features
 
-1. Submit one CSE student (choose a specialization) and one ECE student using different roll numbers.
+1. Submit one CSE student (choose a specialization or **None (Core branch)**) and one ECE student using different roll numbers.
 2. Submit the same roll number again. The form should say **This roll number is already registered.** and should not add another student.
 3. Open `/admin/login` and sign in with the credentials from `.env`.
 4. Try a department card and department dropdown; filter by year and semester.
